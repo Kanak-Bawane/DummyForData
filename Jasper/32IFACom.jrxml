@@ -1,0 +1,230 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="32IFACom" language="java" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a3b2c1d0-4e5f-6789-abcd-ef0123456789">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgres Data Adapter"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.title" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.pageHeader" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.columnHeader" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.detail" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.columnFooter" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.pageFooter" value="true"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.background" value="true"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="438"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="551"/>
+	<style name="DetailStyle" fontName="Arial" fontSize="8.0"/>
+	<style name="SummaryAmountStyle" fontName="Arial" fontSize="8.0"/>
+	<parameter name="StartDate" class="java.util.Date">
+		<description><![CDATA[Crystal {?StartDate} / formula StartDate]]></description>
+	</parameter>
+	<parameter name="EndDate" class="java.util.Date">
+		<description><![CDATA[Crystal {?EndDate} / formula EndDate]]></description>
+	</parameter>
+	<parameter name="PayDate" class="java.util.Date">
+		<description><![CDATA[Crystal {?PayDate} / formula PayDate]]></description>
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT
+  I.BANKACCOUNTNAME,
+  I.BANKACCOUNTNO,
+  I.BANKREF,
+  I.BANKSORTCODE,
+  I.IFA_REF,
+  I.NETWORKIFAREFERENCE,
+  I.PAIDBYBACS,
+  N.BANKSORTCODE AS NET_BANKSORTCODE,
+  N.BANKACCOUNTNO AS NET_BANKACCOUNTNO,
+  N.BANKACCOUNTNAME AS NET_BANKACCOUNTNAME,
+  N.BANKREF AS NET_BANKREF,
+  N.PAIDBYBACS AS NET_PAIDBYBACS,
+  P.ADVISER_CHARGE_AMT,
+  P.COMMISSION,
+  P.COMPLETION
+FROM reports.PADETAIL P
+INNER JOIN reports.IFA I ON I.IFA_REF = P.IFA_REF
+LEFT JOIN reports.IFANET N ON N.IFA_REF = TRIM(I.NETWORKIFAREFERENCE)
+WHERE  I.PAIDBYBACS = 'Y'
+  AND   P.COMPLETION >= $P{StartDate}
+  AND P.COMPLETION < ($P{EndDate}::timestamp + INTERVAL '1 day')
+  AND COALESCE(P.COMMISSION, 0) <> 0
+ORDER BY
+  CASE
+    WHEN I.NETWORKIFAREFERENCE IS NULL THEN I.IFA_REF
+    WHEN I.NETWORKIFAREFERENCE <> 'IFA P-001' THEN I.NETWORKIFAREFERENCE
+    ELSE I.IFA_REF
+  END,
+  I.IFA_REF]]></query>
+	<field name="bankaccountname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bankaccountname"/>
+		<property name="com.jaspersoft.studio.field.label" value="bankaccountname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="bankaccountno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bankaccountno"/>
+		<property name="com.jaspersoft.studio.field.label" value="bankaccountno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="bankref" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bankref"/>
+		<property name="com.jaspersoft.studio.field.label" value="bankref"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="banksortcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="banksortcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="banksortcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="ifa_ref" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ifa_ref"/>
+		<property name="com.jaspersoft.studio.field.label" value="ifa_ref"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="networkifareference" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="networkifareference"/>
+		<property name="com.jaspersoft.studio.field.label" value="networkifareference"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="paidbybacs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="paidbybacs"/>
+		<property name="com.jaspersoft.studio.field.label" value="paidbybacs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifa"/>
+	</field>
+	<field name="net_banksortcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="net_banksortcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="net_banksortcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifanet"/>
+	</field>
+	<field name="net_bankaccountno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="net_bankaccountno"/>
+		<property name="com.jaspersoft.studio.field.label" value="net_bankaccountno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifanet"/>
+	</field>
+	<field name="net_bankaccountname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="net_bankaccountname"/>
+		<property name="com.jaspersoft.studio.field.label" value="net_bankaccountname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifanet"/>
+	</field>
+	<field name="net_bankref" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="net_bankref"/>
+		<property name="com.jaspersoft.studio.field.label" value="net_bankref"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifanet"/>
+	</field>
+	<field name="net_paidbybacs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="net_paidbybacs"/>
+		<property name="com.jaspersoft.studio.field.label" value="net_paidbybacs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ifanet"/>
+	</field>
+	<field name="adviser_charge_amt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="adviser_charge_amt"/>
+		<property name="com.jaspersoft.studio.field.label" value="adviser_charge_amt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="padetail"/>
+	</field>
+	<field name="commission" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="commission"/>
+		<property name="com.jaspersoft.studio.field.label" value="commission"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="padetail"/>
+	</field>
+	<field name="completion" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="completion"/>
+		<property name="com.jaspersoft.studio.field.label" value="completion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="padetail"/>
+	</field>
+	<variable name="PBB" class="java.lang.String">
+		<expression><![CDATA[$F{paidbybacs} == null ? "NULL" : $F{paidbybacs}]]></expression>
+	</variable>
+	<variable name="NetPBB" class="java.lang.String">
+		<expression><![CDATA[$F{net_paidbybacs} == null ? "NULL" : $F{net_paidbybacs}]]></expression>
+	</variable>
+	<variable name="IFREF" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA[$F{networkifareference} == null
+    ? $F{ifa_ref}
+    : (!"IFA P-001".equals($F{networkifareference}) ? $F{networkifareference} : $F{ifa_ref})]]></expression>
+	</variable>
+	<variable name="Decider" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA[$F{networkifareference}== null
+    ? (!"Y".equals($V{PBB}) ? "1" : "2")
+    : (!"IFA P-001".equals($F{networkifareference})
+        ? (!"Y".equals($V{NetPBB}) ? "3" : "4")
+        : (!"Y".equals($V{PBB}) ? "1" : "2"))]]></expression>
+	</variable>
+	<variable name="sortCodeRaw" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{banksortcode} :$F{net_banksortcode}]]></expression>
+	</variable>
+	<variable name="SortCode" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA[$V{sortCodeRaw} == null || $V{sortCodeRaw}.length() < 6
+    ? ($V{sortCodeRaw} == null ? "" : $V{sortCodeRaw})
+    : $V{sortCodeRaw}.substring(0, 2) + "-" + $V{sortCodeRaw}.substring(2, 4) + "-" + $V{sortCodeRaw}.substring(4, 6)]]></expression>
+	</variable>
+	<variable name="BankAccountName" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{bankaccountname} : $F{net_bankaccountname}]]></expression>
+	</variable>
+	<variable name="BankAccountNo" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{bankaccountno} : $F{net_bankaccountno}]]></expression>
+	</variable>
+	<variable name="BankRef" resetType="Group" calculation="First" resetGroup="IFREFGroup" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ?$F{bankref} :$F{net_bankref}]]></expression>
+	</variable>
+	<variable name="ChargeAmtOrComm" resetType="Group" calculation="Sum" resetGroup="IFREFGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{adviser_charge_amt} == null
+    ? ($F{commission} == null ? java.math.BigDecimal.ZERO : $F{commission})
+    :$F{adviser_charge_amt}]]></expression>
+	</variable>
+	<variable name="GrandChargeAmtOrComm" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{adviser_charge_amt}== null
+    ? ($F{commission}== null ? java.math.BigDecimal.ZERO :$F{commission})
+    : $F{adviser_charge_amt}]]></expression>
+	</variable>
+	<group name="IFREFGroup">
+		<expression><![CDATA[$F{networkifareference} == null
+    ? $F{ifa_ref}
+    : (!"IFA P-001".equals($F{networkifareference}) ? $F{networkifareference} : $F{ifa_ref})]]></expression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="17" splitType="Stretch">
+				<printWhenExpression><![CDATA[$V{ChargeAmtOrComm}.compareTo(java.math.BigDecimal.ZERO) != 0]]></printWhenExpression>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000001" x="10" y="2" width="62" height="12" blankWhenNull="true" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$V{SortCode}]]></expression>
+				</element>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000002" x="72" y="2" width="54" height="12" blankWhenNull="true" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$V{BankAccountNo}]]></expression>
+				</element>
+				<element kind="staticText" uuid="b0010001-0001-0001-0001-000000000003" x="126" y="2" width="18" height="12" hTextAlign="Right" vTextAlign="Middle" style="DetailStyle">
+					<text><![CDATA[0]]></text>
+				</element>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000004" x="144" y="2" width="72" height="12" pattern="#0.##" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$V{ChargeAmtOrComm}]]></expression>
+				</element>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000005" x="252" y="2" width="108" height="12" blankWhenNull="true" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$V{BankAccountName}]]></expression>
+				</element>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000006" x="360" y="2" width="72" height="12" blankWhenNull="true" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$V{BankRef}]]></expression>
+				</element>
+				<element kind="staticText" uuid="b0010001-0001-0001-0001-000000000007" x="432" y="2" width="18" height="12" hTextAlign="Right" vTextAlign="Middle" style="DetailStyle">
+					<text><![CDATA[99]]></text>
+				</element>
+				<element kind="textField" uuid="b0010001-0001-0001-0001-000000000008" x="466" y="2" width="72" height="12" blankWhenNull="true" vTextAlign="Middle" style="DetailStyle">
+					<expression><![CDATA[$P{PayDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{PayDate})]]></expression>
+				</element>
+			</band>
+			<band splitType="Stretch"/>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title splitType="Stretch"/>
+	<pageHeader splitType="Stretch"/>
+	<columnHeader splitType="Stretch"/>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter splitType="Stretch"/>
+	<pageFooter splitType="Stretch"/>
+	<summary height="16" splitType="Stretch">
+		<element kind="textField" uuid="c0010001-0001-0001-0001-000000000001" x="144" y="2" width="72" height="12" pattern="#0.##" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="SummaryAmountStyle">
+			<expression><![CDATA[$V{GrandChargeAmtOrComm}]]></expression>
+		</element>
+	</summary>
+</jasperReport>

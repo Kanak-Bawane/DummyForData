@@ -1,0 +1,602 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="32IFAsment" language="java" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f80">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgres Data Adapter"/>
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="net.sf.jasperreports.summary.ignore.pagination" value="true"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="TitleStyle" fontName="Arial" fontSize="10.0" underline="true"/>
+	<style name="HeaderStyle" fontName="Arial" fontSize="8.0" bold="true"/>
+	<style name="HeaderStyleUnderline" fontName="Arial" fontSize="8.0" bold="true" underline="true"/>
+	<style name="DetailStyle" fontName="Arial" fontSize="8.0"/>
+	<style name="AddressStyle" fontName="Arial" fontSize="8.0"/>
+	<style name="SummaryLabelStyle" fontName="Arial" fontSize="8.0"/>
+	<style name="SummaryAmountStyle" pattern="£#,##0.00" fontName="Arial" fontSize="8.0" bold="true"/>
+	<style name="CurrencyStyle" pattern="£#,##0.00" fontName="Arial" fontSize="8.0"/>
+	<style name="PercentStyle" pattern="#0.00'%'" fontName="Arial" fontSize="8.0"/>
+	<parameter name="StartDate" class="java.util.Date">
+		<description><![CDATA[Crystal {?StartDate}]]></description>
+		<defaultValueExpression><![CDATA[new java.util.GregorianCalendar(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR), java.util.Calendar.getInstance().get(java.util.Calendar.MONTH), 1).getTime()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EndDate" class="java.util.Date">
+		<description><![CDATA[Crystal {?EndDate}]]></description>
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LogoLeftPath" forPrompting="false" class="java.lang.String">
+		<description><![CDATA[Optional path to left logo (green heart). Supply at runtime.]]></description>
+	</parameter>
+	<parameter name="LogoRightPath" forPrompting="false" class="java.lang.String">
+		<description><![CDATA[Optional path to right logo (LV=). Supply at runtime.]]></description>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT
+  P.POLICY_NO,
+  P.POLICY_REF,
+  P.PREMIUM,
+  P.COMMISSION,
+  P.COMMISSIONPERCENT,
+  P.ADVISER_CHARGE_AMT,
+  P.ADVISER_CHARGE_PER,
+  P.COMPLETION,
+  P.PH_CORRESPOND_NAME,
+  P.PH_SHORT_NAME,
+  P.SURNAME_1,
+  P.FORENAME_A_1,
+  P.FORENAME_B_1,
+  P.PH_ADDRESS_1,
+  P.PH_ADDRESS_2,
+  P.PH_ADDRESS_3,
+  P.PH_ADDRESS_4,
+  P.PH_ADDRESS_5,
+  P.PH_POST_CODE,
+  P.PLANTYPE,
+  C.ANN_ADDRESS_1,
+  C.ANN_ADDRESS_2,
+  C.ANN_ADDRESS_3,
+  C.ANN_ADDRESS_4,
+  C.ANN_ADDRESS_5,
+  C.ANN_POST_CODE,
+  I.IFA_REF,
+  I.NETWORKIFAREFERENCE,
+  I.PARTNER_CODE,
+  I.BROKER_NAME,
+  I.BUILDING,
+  I.NO_STREET,
+  I.DISTRICT,
+  I.CITY,
+  I.COUNTY,
+  I.POST_CODE,
+  I.TEL,
+  I.PAIDBYBACS,
+  I.BANKSORTCODE,
+  I.BANKACCOUNTNO,
+  I.BANKACCOUNTNAME,
+  I.BANKREF,
+  N.IFA_REF AS NET_IFA_REF,
+  N.BROKER_NAME AS NET_BROKER_NAME,
+  N.BUILDING AS NET_BUILDING,
+  N.NO_STREET AS NET_NO_STREET,
+  N.DISTRICT AS NET_DISTRICT,
+  N.CITY AS NET_CITY,
+  N.COUNTY AS NET_COUNTY,
+  N.POST_CODE AS NET_POST_CODE,
+  N.TEL AS NET_TEL,
+  N.PAIDBYBACS AS NET_PAIDBYBACS,
+  N.BANKSORTCODE AS NET_BANKSORTCODE,
+  N.BANKACCOUNTNO AS NET_BANKACCOUNTNO,
+  N.BANKACCOUNTNAME AS NET_BANKACCOUNTNAME,
+  N.BANKREF AS NET_BANKREF
+FROM reports.PADETAIL P
+INNER JOIN reports.IFA I ON I.IFA_REF = P.IFA_REF
+LEFT JOIN reports.IFANET N ON N.IFA_REF = TRIM(I.NETWORKIFAREFERENCE)
+LEFT JOIN reports.CONTACTS C ON C.POLICY_NO = P.POLICY_NO
+WHERE I.PAIDBYBACS = 'Y'
+  AND P.COMPLETION >= $P{StartDate}
+  AND P.COMPLETION < ($P{EndDate}::timestamp + INTERVAL '1 day')
+ORDER BY
+  CASE
+    WHEN I.NETWORKIFAREFERENCE IS NULL OR TRIM(I.NETWORKIFAREFERENCE) = '' THEN I.IFA_REF
+    WHEN TRIM(I.NETWORKIFAREFERENCE) <> 'IFA P-001' THEN TRIM(I.NETWORKIFAREFERENCE)
+    ELSE I.IFA_REF
+  END,
+  I.IFA_REF,
+  P.POLICY_REF]]></query>
+	<field name="policy_no" class="java.math.BigDecimal"/>
+	<field name="policy_ref" class="java.lang.String"/>
+	<field name="premium" class="java.math.BigDecimal"/>
+	<field name="commission" class="java.math.BigDecimal"/>
+	<field name="commissionpercent" class="java.math.BigDecimal"/>
+	<field name="adviser_charge_amt" class="java.math.BigDecimal"/>
+	<field name="adviser_charge_per" class="java.math.BigDecimal"/>
+	<field name="completion" class="java.sql.Date"/>
+	<field name="ph_correspond_name" class="java.lang.String"/>
+	<field name="ph_short_name" class="java.lang.String"/>
+	<field name="surname_1" class="java.lang.String"/>
+	<field name="forename_a_1" class="java.lang.String"/>
+	<field name="forename_b_1" class="java.lang.String"/>
+	<field name="ph_address_1" class="java.lang.String"/>
+	<field name="ph_address_2" class="java.lang.String"/>
+	<field name="ph_address_3" class="java.lang.String"/>
+	<field name="ph_address_4" class="java.lang.String"/>
+	<field name="ph_address_5" class="java.lang.String"/>
+	<field name="ph_post_code" class="java.lang.String"/>
+	<field name="plantype" class="java.lang.String"/>
+	<field name="ann_address_1" class="java.lang.String"/>
+	<field name="ann_address_2" class="java.lang.String"/>
+	<field name="ann_address_3" class="java.lang.String"/>
+	<field name="ann_address_4" class="java.lang.String"/>
+	<field name="ann_address_5" class="java.lang.String"/>
+	<field name="ann_post_code" class="java.lang.String"/>
+	<field name="ifa_ref" class="java.lang.String"/>
+	<field name="networkifareference" class="java.lang.String"/>
+	<field name="partner_code" class="java.lang.String"/>
+	<field name="broker_name" class="java.lang.String"/>
+	<field name="building" class="java.lang.String"/>
+	<field name="no_street" class="java.lang.String"/>
+	<field name="district" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="county" class="java.lang.String"/>
+	<field name="post_code" class="java.lang.String"/>
+	<field name="tel" class="java.lang.String"/>
+	<field name="paidbybacs" class="java.lang.String"/>
+	<field name="banksortcode" class="java.lang.String"/>
+	<field name="bankaccountno" class="java.lang.String"/>
+	<field name="bankaccountname" class="java.lang.String"/>
+	<field name="bankref" class="java.lang.String"/>
+	<field name="net_ifa_ref" class="java.lang.String"/>
+	<field name="net_broker_name" class="java.lang.String"/>
+	<field name="net_building" class="java.lang.String"/>
+	<field name="net_no_street" class="java.lang.String"/>
+	<field name="net_district" class="java.lang.String"/>
+	<field name="net_city" class="java.lang.String"/>
+	<field name="net_county" class="java.lang.String"/>
+	<field name="net_post_code" class="java.lang.String"/>
+	<field name="net_tel" class="java.lang.String"/>
+	<field name="net_paidbybacs" class="java.lang.String"/>
+	<field name="net_banksortcode" class="java.lang.String"/>
+	<field name="net_bankaccountno" class="java.lang.String"/>
+	<field name="net_bankaccountname" class="java.lang.String"/>
+	<field name="net_bankref" class="java.lang.String"/>
+	<variable name="PBB" class="java.lang.String">
+		<expression><![CDATA[$F{paidbybacs} == null ? "NULL" : $F{paidbybacs}.trim().toUpperCase()]]></expression>
+	</variable>
+	<variable name="NetPBB" class="java.lang.String">
+		<expression><![CDATA[$F{net_paidbybacs} == null ? "NULL" : $F{net_paidbybacs}.trim().toUpperCase()]]></expression>
+	</variable>
+	<variable name="GroupKey" class="java.lang.String">
+		<expression><![CDATA[($F{networkifareference} == null || $F{networkifareference}.trim().isEmpty())
+    ? $F{ifa_ref}
+    : (!"IFA P-001".equals($F{networkifareference}.trim()) ? $F{networkifareference}.trim() : $F{ifa_ref})]]></expression>
+	</variable>
+	<variable name="Decider" class="java.lang.String">
+		<expression><![CDATA[($F{networkifareference} == null || $F{networkifareference}.trim().isEmpty())
+    ? (!"Y".equals($V{PBB}) ? "1" : "2")
+    : (!"IFA P-001".equals($F{networkifareference}.trim())
+        ? (!"Y".equals($V{NetPBB}) ? "3" : "4")
+        : (!"Y".equals($V{PBB}) ? "1" : "2"))]]></expression>
+	</variable>
+	<variable name="IFA_REF" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{ifa_ref} == null ? "" : $F{ifa_ref})
+    : ($F{net_ifa_ref} == null ? "" : $F{net_ifa_ref})]]></expression>
+	</variable>
+	<variable name="BrokerName" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{broker_name} == null ? "" : $F{broker_name})
+    : ($F{net_broker_name} == null ? "" : $F{net_broker_name})]]></expression>
+	</variable>
+	<variable name="Building" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{building} == null ? "" : $F{building})
+    : ($F{net_building} == null ? "" : $F{net_building})]]></expression>
+	</variable>
+	<variable name="NoStreet" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{no_street} == null ? "" : $F{no_street})
+    : ($F{net_no_street} == null ? "" : $F{net_no_street})]]></expression>
+	</variable>
+	<variable name="District" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{district} == null ? "" : $F{district})
+    : ($F{net_district} == null ? "" : $F{net_district})]]></expression>
+	</variable>
+	<variable name="City" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{city} == null ? "" : $F{city})
+    : ($F{net_city} == null ? "" : $F{net_city})]]></expression>
+	</variable>
+	<variable name="County" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{county} == null ? "" : $F{county})
+    : ($F{net_county} == null ? "" : $F{net_county})]]></expression>
+	</variable>
+	<variable name="PostCode" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{post_code} == null ? "" : $F{post_code})
+    : ($F{net_post_code} == null ? "" : $F{net_post_code})]]></expression>
+	</variable>
+	<variable name="Telephone" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider})
+    ? ($F{tel} == null ? "" : $F{tel})
+    : ($F{net_tel} == null ? "" : $F{net_tel})]]></expression>
+	</variable>
+	<variable name="sortCodeRaw" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{banksortcode} : $F{net_banksortcode}]]></expression>
+	</variable>
+	<variable name="SortCode" class="java.lang.String">
+		<expression><![CDATA[$V{sortCodeRaw} == null || $V{sortCodeRaw}.length() < 6
+    ? ($V{sortCodeRaw} == null ? "" : $V{sortCodeRaw})
+    : $V{sortCodeRaw}.substring(0, 2) + "-" + $V{sortCodeRaw}.substring(2, 4) + "-" + $V{sortCodeRaw}.substring(4, 6)]]></expression>
+	</variable>
+	<variable name="AccountName" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{bankaccountname} : $F{net_bankaccountname}]]></expression>
+	</variable>
+	<variable name="AccountNo" class="java.lang.String">
+		<expression><![CDATA["2".equals($V{Decider}) ? $F{bankaccountno} : $F{net_bankaccountno}]]></expression>
+	</variable>
+	<variable name="Header" calculation="First" class="java.lang.String">
+		<expression><![CDATA["Remuneration Statement for period "
+    + ($P{StartDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{StartDate}))
+    + " to "
+    + ($P{EndDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{EndDate}))]]></expression>
+	</variable>
+	<variable name="Address_1" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_address_1}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_address_1} : $F{ph_address_1})]]></expression>
+	</variable>
+	<variable name="Address_2" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_address_2}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_address_2} : $F{ph_address_2})]]></expression>
+	</variable>
+	<variable name="Address_3" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_address_3}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_address_3} : $F{ph_address_3})]]></expression>
+	</variable>
+	<variable name="Address_4" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_address_4}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_address_4} : $F{ph_address_4})]]></expression>
+	</variable>
+	<variable name="Address_5" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_address_5}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_address_5} : $F{ph_address_5})]]></expression>
+	</variable>
+	<variable name="Post_Code" class="java.lang.String">
+		<expression><![CDATA[$F{plantype} == null
+    ? $F{ph_post_code}
+    : ("ICFP".equals($F{plantype}) ? $F{ann_post_code} : $F{ph_post_code})]]></expression>
+	</variable>
+	<variable name="FullClientName" class="java.lang.String">
+		<expression><![CDATA[$F{ph_correspond_name} != null && !$F{ph_correspond_name}.trim().isEmpty()
+    ? $F{ph_correspond_name}.trim()
+    : (($F{forename_a_1} != null ? $F{forename_a_1}.trim() + " " : "")
+        + ($F{forename_b_1} != null ? $F{forename_b_1}.trim() + " " : "")
+        + ($F{surname_1} == null ? "" : $F{surname_1}.trim())).trim()]]></expression>
+	</variable>
+	<variable name="SumPremiumGroup" resetType="Group" calculation="Sum" resetGroup="IFAREFGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{premium} == null ? java.math.BigDecimal.ZERO : $F{premium}]]></expression>
+	</variable>
+	<variable name="SumCommissionGroup" resetType="Group" calculation="Sum" resetGroup="IFAREFGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{commission} == null ? java.math.BigDecimal.ZERO : $F{commission}]]></expression>
+	</variable>
+	<variable name="SumAdviserChargeGroup" resetType="Group" calculation="Sum" resetGroup="IFAREFGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{adviser_charge_amt} == null ? java.math.BigDecimal.ZERO : $F{adviser_charge_amt}]]></expression>
+	</variable>
+	<variable name="SumPremiumReport" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{premium} == null ? java.math.BigDecimal.ZERO : $F{premium}]]></expression>
+	</variable>
+	<variable name="SumCommissionReport" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{commission} == null ? java.math.BigDecimal.ZERO : $F{commission}]]></expression>
+	</variable>
+	<variable name="SumAdviserChargeReport" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{adviser_charge_amt} == null ? java.math.BigDecimal.ZERO : $F{adviser_charge_amt}]]></expression>
+	</variable>
+	<variable name="GroupDetailRow" resetType="Group" calculation="Count" resetGroup="IFAREFGroup" class="java.lang.Integer">
+		<expression><![CDATA[1]]></expression>
+	</variable>
+	<group name="IFAREFGroup" startNewPage="true">
+		<expression><![CDATA[$V{GroupKey}]]></expression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="28" splitType="Stretch">
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000029" x="0" y="2" width="572" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000053" x="198" y="6" width="84" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000030" x="200" y="8" width="80" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="CurrencyStyle">
+					<expression><![CDATA[$V{SumPremiumGroup}]]></expression>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000054" x="198" y="24" width="84" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000055" x="288" y="6" width="74" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000031" x="290" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="CurrencyStyle">
+					<expression><![CDATA[$V{SumCommissionGroup}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $V{SumCommissionGroup}]]></expression>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000056" x="288" y="24" width="74" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000057" x="408" y="6" width="74" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+				<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000032" x="410" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="CurrencyStyle">
+					<expression><![CDATA[$V{SumAdviserChargeGroup}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $V{SumAdviserChargeGroup}]]></expression>
+				</element>
+				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000058" x="408" y="24" width="74" height="1">
+					<pen lineWidth="0.5"/>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title splitType="Stretch"/>
+	<pageHeader height="14" splitType="Stretch">
+		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000034" x="430" y="0" width="142" height="12" hTextAlign="Right" style="DetailStyle">
+			<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format(new java.util.Date())]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader splitType="Stretch"/>
+	<detail>
+		<band height="44" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1
+    && (($P{LogoLeftPath} != null && !$P{LogoLeftPath}.trim().isEmpty())
+        || ($P{LogoRightPath} != null && !$P{LogoRightPath}.trim().isEmpty()))]]></printWhenExpression>
+			<element kind="image" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000001" x="0" y="0" width="40" height="40" onErrorType="Blank">
+				<printWhenExpression><![CDATA[$P{LogoLeftPath} != null && !$P{LogoLeftPath}.trim().isEmpty()]]></printWhenExpression>
+				<expression><![CDATA[$P{LogoLeftPath}]]></expression>
+			</element>
+			<element kind="image" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000002" x="500" y="0" width="72" height="40" onErrorType="Blank">
+				<printWhenExpression><![CDATA[$P{LogoRightPath} != null && !$P{LogoRightPath}.trim().isEmpty()]]></printWhenExpression>
+				<expression><![CDATA[$P{LogoRightPath}]]></expression>
+			</element>
+		</band>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000003" x="0" y="0" width="120" height="12" blankWhenNull="true" style="DetailStyle">
+				<printWhenExpression><![CDATA[$V{IFA_REF} != null && !$V{IFA_REF}.trim().isEmpty()]]></printWhenExpression>
+				<expression><![CDATA[$V{IFA_REF}]]></expression>
+			</element>
+		</band>
+		<band height="2" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+		</band>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000004" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{BrokerName}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{Building} != null && !$V{Building}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000005" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{Building}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{NoStreet} != null && !$V{NoStreet}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000006" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{NoStreet}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{District} != null && !$V{District}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000007" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{District}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{City} != null && !$V{City}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000008" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{City}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{County} != null && !$V{County}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000009" x="0" y="0" width="280" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{County}]]></expression>
+			</element>
+		</band>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1)
+    && ($V{PostCode} != null && !$V{PostCode}.trim().isEmpty())]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000010" x="0" y="0" width="120" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{PostCode}]]></expression>
+			</element>
+		</band>
+		<band height="3" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+		</band>
+		<band height="3" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+		</band>
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000011" x="0" y="0" width="572" height="14" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="TitleStyle">
+				<expression><![CDATA["Remuneration Statement for period "
+    + ($P{StartDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{StartDate}))
+    + " to "
+    + ($P{EndDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{EndDate}))]]></expression>
+			</element>
+		</band>
+		<band height="6" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+		</band>
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000013" x="0" y="0" width="90" height="12" style="HeaderStyleUnderline">
+				<text><![CDATA[Account Name:]]></text>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000014" x="90" y="0" width="150" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{AccountName}]]></expression>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000015" x="250" y="0" width="60" height="12" style="HeaderStyleUnderline">
+				<text><![CDATA[Sort Code:]]></text>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000016" x="310" y="0" width="70" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{SortCode}]]></expression>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000017" x="390" y="0" width="70" height="12" style="HeaderStyleUnderline">
+				<text><![CDATA[Account No:]]></text>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000018" x="460" y="0" width="80" height="12" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{AccountNo}]]></expression>
+			</element>
+		</band>
+		<band height="4" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+		</band>
+		<band height="24" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000027" x="290" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
+				<text><![CDATA[Commission]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000028" x="410" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
+				<text><![CDATA[Adviser charge]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000020" x="0" y="12" width="190" height="12" style="HeaderStyleUnderline">
+				<text><![CDATA[Full Client Name]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000021" x="200" y="12" width="80" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[Premium]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000022" x="290" y="12" width="70" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[Amount]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000023" x="360" y="12" width="45" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[%]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000024" x="410" y="12" width="70" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[Amount]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000025" x="485" y="12" width="40" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[%]]></text>
+			</element>
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000026" x="530" y="12" width="42" height="12" hTextAlign="Right" style="HeaderStyleUnderline">
+				<text><![CDATA[Our Ref]]></text>
+			</element>
+			<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000019" x="0" y="23" width="572" height="1">
+				<pen lineWidth="0.5"/>
+			</element>
+		</band>
+		<band height="14" splitType="Stretch">
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000035" x="0" y="0" width="190" height="12" textAdjust="StretchHeight" blankWhenNull="true" style="DetailStyle">
+				<expression><![CDATA[$V{FullClientName}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000036" x="200" y="0" width="80" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="CurrencyStyle">
+				<expression><![CDATA[$F{premium}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000037" x="290" y="0" width="70" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="CurrencyStyle">
+				<expression><![CDATA[$F{commission} == null || $F{commission}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{commission}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000038" x="360" y="0" width="45" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="PercentStyle">
+				<expression><![CDATA[$F{commissionpercent}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000039" x="410" y="0" width="70" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="CurrencyStyle">
+				<expression><![CDATA[$F{adviser_charge_amt} == null || $F{adviser_charge_amt}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{adviser_charge_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000040" x="485" y="0" width="40" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="PercentStyle">
+				<expression><![CDATA[$F{adviser_charge_per} == null || $F{adviser_charge_per}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{adviser_charge_per}]]></expression>
+			</element>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000041" x="530" y="0" width="42" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="DetailStyle">
+				<expression><![CDATA[$F{policy_ref}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Address_1} != null && !$V{Address_1}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000042" x="0" y="0" width="190" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Address_1}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Address_2} != null && !$V{Address_2}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000043" x="0" y="0" width="190" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Address_2}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Address_3} != null && !$V{Address_3}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000044" x="0" y="0" width="190" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Address_3}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Address_4} != null && !$V{Address_4}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000045" x="0" y="0" width="190" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Address_4}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Address_5} != null && !$V{Address_5}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000046" x="0" y="0" width="190" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Address_5}]]></expression>
+			</element>
+		</band>
+		<band height="11" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{Post_Code} != null && !$V{Post_Code}.trim().isEmpty()]]></printWhenExpression>
+			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000047" x="0" y="0" width="120" height="11" textAdjust="StretchHeight" blankWhenNull="true" style="AddressStyle">
+				<expression><![CDATA[$V{Post_Code}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter splitType="Stretch"/>
+	<pageFooter height="16" splitType="Stretch">
+		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000048" x="250" y="2" width="72" height="12" hTextAlign="Center" style="DetailStyle">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="32" splitType="Stretch">
+		<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000049" mode="Opaque" x="0" y="8" width="195" height="14" backcolor="#FFFFFF" hTextAlign="Left" vTextAlign="Middle" style="SummaryLabelStyle">
+			<text><![CDATA[Grand Commission Totals:]]></text>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000059" x="198" y="6" width="84" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000050" x="200" y="8" width="80" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="SummaryAmountStyle">
+			<expression><![CDATA[$V{SumPremiumReport}]]></expression>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000060" x="198" y="22" width="84" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000065" x="198" y="24" width="84" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000061" x="288" y="6" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000051" x="290" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="SummaryAmountStyle">
+			<expression><![CDATA[$V{SumCommissionReport}]]></expression>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000062" x="288" y="22" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000066" x="288" y="24" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000063" x="408" y="6" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000052" x="410" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="SummaryAmountStyle">
+			<expression><![CDATA[$V{SumAdviserChargeReport}]]></expression>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000064" x="408" y="22" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+		<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000067" x="408" y="24" width="74" height="1">
+			<pen lineWidth="0.5"/>
+		</element>
+	</summary>
+</jasperReport>

@@ -20,11 +20,11 @@
 	<parameter name="endDate" class="java.util.Date">
 		<description><![CDATA[Crystal {?EndDate}]]></description>
 	</parameter>
-	<parameter name="LogoLeftPath" forPrompting="false" class="java.lang.String">
-		<description><![CDATA[Optional path to left logo (green heart). Supply at runtime.]]></description>
+	<parameter name="LogoLeftPath" forPrompting="true" class="java.lang.String">
+		<description><![CDATA[Path to left logo image (e.g. Heart.png). Supply at runtime.]]></description>
 	</parameter>
-	<parameter name="LogoRightPath" forPrompting="false" class="java.lang.String">
-		<description><![CDATA[Optional path to right logo (LV=). Supply at runtime.]]></description>
+	<parameter name="LogoRightPath" forPrompting="true" class="java.lang.String">
+		<description><![CDATA[Path to right logo image (e.g. LV=.png). Supply at runtime.]]></description>
 	</parameter>
 	<query language="SQL"><![CDATA[SELECT
   P.POLICY_NO,
@@ -364,7 +364,7 @@ ORDER BY
 				<printWhenExpression><![CDATA[$P{LogoLeftPath} != null && !$P{LogoLeftPath}.trim().isEmpty()]]></printWhenExpression>
 				<expression><![CDATA[$P{LogoLeftPath}]]></expression>
 			</element>
-			<element kind="image" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000002" x="500" y="0" width="72" height="40" onErrorType="Blank">
+			<element kind="image" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000002" x="485" y="0" width="87" height="40" onErrorType="Blank" evaluationTime="Group" evaluationGroup="IFAREFGroup">
 				<printWhenExpression><![CDATA[$P{LogoRightPath} != null && !$P{LogoRightPath}.trim().isEmpty()]]></printWhenExpression>
 				<expression><![CDATA[$P{LogoRightPath}]]></expression>
 			</element>

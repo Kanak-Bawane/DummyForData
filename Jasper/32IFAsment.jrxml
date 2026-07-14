@@ -14,13 +14,11 @@
 	<style name="SummaryAmountStyle" pattern="£#,##0.00" fontName="Arial" fontSize="8.0" bold="true"/>
 	<style name="CurrencyStyle" pattern="£#,##0.00" fontName="Arial" fontSize="8.0"/>
 	<style name="PercentStyle" pattern="#0.00'%'" fontName="Arial" fontSize="8.0"/>
-	<parameter name="StartDate" class="java.util.Date">
+	<parameter name="startDate" class="java.util.Date">
 		<description><![CDATA[Crystal {?StartDate}]]></description>
-		<defaultValueExpression><![CDATA[new java.util.GregorianCalendar(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR), java.util.Calendar.getInstance().get(java.util.Calendar.MONTH), 1).getTime()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="EndDate" class="java.util.Date">
+	<parameter name="endDate" class="java.util.Date">
 		<description><![CDATA[Crystal {?EndDate}]]></description>
-		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LogoLeftPath" forPrompting="false" class="java.lang.String">
 		<description><![CDATA[Optional path to left logo (green heart). Supply at runtime.]]></description>
@@ -89,8 +87,8 @@ FROM reports.PADETAIL P
 INNER JOIN reports.IFA I ON I.IFA_REF = P.IFA_REF
 LEFT JOIN reports.IFANET N ON N.IFA_REF = TRIM(I.NETWORKIFAREFERENCE)
 LEFT JOIN reports.CONTACTS C ON C.POLICY_NO = P.POLICY_NO
-WHERE P.COMPLETION >= $P{StartDate}
-  AND P.COMPLETION < ($P{EndDate}::timestamp + INTERVAL '1 day')
+WHERE P.COMPLETION >= $P{startDate}
+  AND P.COMPLETION < ($P{endDate}::timestamp + INTERVAL '1 day')
   AND (
     (
       (I.NETWORKIFAREFERENCE IS NULL OR TRIM(I.NETWORKIFAREFERENCE) = '' OR TRIM(I.NETWORKIFAREFERENCE) = 'IFA P-001')
@@ -251,9 +249,9 @@ ORDER BY
 	</variable>
 	<variable name="Header" calculation="First" class="java.lang.String">
 		<expression><![CDATA["Remuneration Statement for period "
-    + ($P{StartDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{StartDate}))
+    + ($P{startDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{startDate}))
     + " to "
-    + ($P{EndDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{EndDate}))]]></expression>
+    + ($P{endDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{endDate}))]]></expression>
 	</variable>
 	<variable name="Address_1" class="java.lang.String">
 		<expression><![CDATA[$F{plantype} == null
@@ -439,9 +437,9 @@ ORDER BY
 			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000011" x="0" y="0" width="572" height="14" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="TitleStyle">
 				<expression><![CDATA["Remuneration Statement for period "
-    + ($P{StartDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{StartDate}))
+    + ($P{startDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{startDate}))
     + " to "
-    + ($P{EndDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{EndDate}))]]></expression>
+    + ($P{endDate} == null ? "" : new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format($P{endDate}))]]></expression>
 			</element>
 		</band>
 		<band height="6" splitType="Stretch">
@@ -565,7 +563,6 @@ ORDER BY
 		</band>
 	</detail>
 	<columnFooter splitType="Stretch"/>
-	<!-- Crystal Page Footer is suppressed (Section Expert); no output -->
 	<pageFooter splitType="Stretch"/>
 	<summary height="32" splitType="Stretch">
 		<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000049" mode="Opaque" x="0" y="8" width="195" height="14" backcolor="#FFFFFF" hTextAlign="Left" vTextAlign="Middle" style="SummaryLabelStyle">

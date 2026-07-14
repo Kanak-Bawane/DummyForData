@@ -89,9 +89,25 @@ FROM reports.PADETAIL P
 INNER JOIN reports.IFA I ON I.IFA_REF = P.IFA_REF
 LEFT JOIN reports.IFANET N ON N.IFA_REF = TRIM(I.NETWORKIFAREFERENCE)
 LEFT JOIN reports.CONTACTS C ON C.POLICY_NO = P.POLICY_NO
-WHERE I.PAIDBYBACS = 'Y'
-  AND P.COMPLETION >= $P{StartDate}
+WHERE P.COMPLETION >= $P{StartDate}
   AND P.COMPLETION < ($P{EndDate}::timestamp + INTERVAL '1 day')
+  AND (
+    (
+      (I.NETWORKIFAREFERENCE IS NULL OR TRIM(I.NETWORKIFAREFERENCE) = '' OR TRIM(I.NETWORKIFAREFERENCE) = 'IFA P-001')
+      AND I.PAIDBYBACS = 'Y'
+    )
+    OR (
+      TRIM(I.NETWORKIFAREFERENCE) IS NOT NULL
+      AND TRIM(I.NETWORKIFAREFERENCE) <> ''
+      AND TRIM(I.NETWORKIFAREFERENCE) <> 'IFA P-001'
+      AND N.PAIDBYBACS = 'Y'
+    )
+  )
+  AND CASE
+    WHEN I.NETWORKIFAREFERENCE IS NULL OR TRIM(I.NETWORKIFAREFERENCE) = '' THEN I.IFA_REF
+    WHEN TRIM(I.NETWORKIFAREFERENCE) <> 'IFA P-001' THEN TRIM(I.NETWORKIFAREFERENCE)
+    ELSE I.IFA_REF
+  END <> 'LVFSL-001'
 ORDER BY
   CASE
     WHEN I.NETWORKIFAREFERENCE IS NULL OR TRIM(I.NETWORKIFAREFERENCE) = '' THEN I.IFA_REF
@@ -320,7 +336,7 @@ ORDER BY
 					<pen lineWidth="0.5"/>
 				</element>
 				<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000031" x="290" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="CurrencyStyle">
-					<expression><![CDATA[$V{SumCommissionGroup}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $V{SumCommissionGroup}]]></expression>
+					<expression><![CDATA[$V{SumCommissionGroup}]]></expression>
 				</element>
 				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000056" x="288" y="24" width="74" height="1">
 					<pen lineWidth="0.5"/>
@@ -329,7 +345,7 @@ ORDER BY
 					<pen lineWidth="0.5"/>
 				</element>
 				<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000032" x="410" y="8" width="70" height="14" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle" style="CurrencyStyle">
-					<expression><![CDATA[$V{SumAdviserChargeGroup}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $V{SumAdviserChargeGroup}]]></expression>
+					<expression><![CDATA[$V{SumAdviserChargeGroup}]]></expression>
 				</element>
 				<element kind="line" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000058" x="408" y="24" width="74" height="1">
 					<pen lineWidth="0.5"/>
@@ -339,11 +355,7 @@ ORDER BY
 	</group>
 	<background splitType="Stretch"/>
 	<title splitType="Stretch"/>
-	<pageHeader height="14" splitType="Stretch">
-		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000034" x="430" y="0" width="142" height="12" hTextAlign="Right" style="DetailStyle">
-			<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.UK).format(new java.util.Date())]]></expression>
-		</element>
-	</pageHeader>
+	<pageHeader splitType="Stretch"/>
 	<columnHeader splitType="Stretch"/>
 	<detail>
 		<band height="44" splitType="Stretch">
@@ -461,10 +473,10 @@ ORDER BY
 		</band>
 		<band height="24" splitType="Stretch">
 			<printWhenExpression><![CDATA[$V{GroupDetailRow} != null && $V{GroupDetailRow}.intValue() == 1]]></printWhenExpression>
-			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000027" x="290" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000027" x="320" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
 				<text><![CDATA[Commission]]></text>
 			</element>
-			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000028" x="410" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
+			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000028" x="440" y="0" width="115" height="10" hTextAlign="Center" style="HeaderStyle">
 				<text><![CDATA[Adviser charge]]></text>
 			</element>
 			<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000020" x="0" y="12" width="190" height="12" style="HeaderStyleUnderline">
@@ -500,16 +512,16 @@ ORDER BY
 				<expression><![CDATA[$F{premium}]]></expression>
 			</element>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000037" x="290" y="0" width="70" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="CurrencyStyle">
-				<expression><![CDATA[$F{commission} == null || $F{commission}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{commission}]]></expression>
+				<expression><![CDATA[$F{commission}]]></expression>
 			</element>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000038" x="360" y="0" width="45" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="PercentStyle">
 				<expression><![CDATA[$F{commissionpercent}]]></expression>
 			</element>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000039" x="410" y="0" width="70" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="CurrencyStyle">
-				<expression><![CDATA[$F{adviser_charge_amt} == null || $F{adviser_charge_amt}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{adviser_charge_amt}]]></expression>
+				<expression><![CDATA[$F{adviser_charge_amt}]]></expression>
 			</element>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000040" x="485" y="0" width="40" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="PercentStyle">
-				<expression><![CDATA[$F{adviser_charge_per} == null || $F{adviser_charge_per}.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : $F{adviser_charge_per}]]></expression>
+				<expression><![CDATA[$F{adviser_charge_per}]]></expression>
 			</element>
 			<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000041" x="530" y="0" width="42" height="12" blankWhenNull="true" hTextAlign="Right" vTextAlign="Top" style="DetailStyle">
 				<expression><![CDATA[$F{policy_ref}]]></expression>
@@ -553,11 +565,8 @@ ORDER BY
 		</band>
 	</detail>
 	<columnFooter splitType="Stretch"/>
-	<pageFooter height="16" splitType="Stretch">
-		<element kind="textField" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000048" x="250" y="2" width="72" height="12" hTextAlign="Center" style="DetailStyle">
-			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
-		</element>
-	</pageFooter>
+	<!-- Crystal Page Footer is suppressed (Section Expert); no output -->
+	<pageFooter splitType="Stretch"/>
 	<summary height="32" splitType="Stretch">
 		<element kind="staticText" uuid="a3f2e1d0-4c5b-6a79-8e0f-000000000049" mode="Opaque" x="0" y="8" width="195" height="14" backcolor="#FFFFFF" hTextAlign="Left" vTextAlign="Middle" style="SummaryLabelStyle">
 			<text><![CDATA[Grand Commission Totals:]]></text>
